@@ -4,7 +4,7 @@
 // Caution: the input arguements of the kernel code needs to be allocated on the GPU (d_ naming convension helps to debug)
 __global__ void square(float* d_out, float* d_in)
 {
-    int idx = threadIdx.x;   // here depends on the <<<block, thresdhold>>>,  build-in variable: threadIdx
+    int idx = threadIdx.x;   // here depends on the <<<block, threadPerBlock>>>,  build-in variable: threadIdx
     float f = d_in[idx];
     d_out[idx] = f * f;
 }
