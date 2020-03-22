@@ -9,6 +9,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(cuda_rgba2grey LANGUAGES CXX CUDA)
 
+
 find_package(CUDA REQUIRED)
 find_package(OpenCV REQUIRED)
 
@@ -31,7 +32,6 @@ set(HW1_files
 
 
 set(SOURCES
-   HW1.cpp
    ${HW1_files}
    ${hdr}
    ${cu})
