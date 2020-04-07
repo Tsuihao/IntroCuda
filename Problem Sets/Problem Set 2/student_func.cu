@@ -187,7 +187,7 @@ void separateChannels(const uchar4* const inputImageRGBA,
   int thread_2D_pos_y = threadIdx.y + blockIdx.y * blockDim.y;
   
   // boundary check
-  if(thread_2D_pos_x >= numRows || thread_2D_pos_y >= numCols)
+  if(thread_2D_pos_x >= numCols || thread_2D_pos_y >= numRows)
     return;
 
   // read that value and assign to each channels
@@ -218,7 +218,7 @@ void recombineChannels(const unsigned char* const redChannel,
 
   //make sure we don't try and access memory outside the image
   //by having any threads mapped there return early
-  if (thread_2D_pos.x >= numCols || thread_2D_pos.y >= numRows)
+  if (thread_2D_pos.x >= numRows || thread_2D_pos.y >= numCols)
     return;
 
   unsigned char red   = redChannel[thread_1D_pos];

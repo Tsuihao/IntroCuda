@@ -35,7 +35,7 @@ student: main.o student_func.o compare.o reference_calc.o Makefile
 main.o: main.cpp timer.h utils.h HW2.cpp
 	g++ -c main.cpp $(GCC_OPTS) -I $(OPENCV_INCLUDEPATH) -I $(CUDA_INCLUDEPATH)
 
-student_func.o: student_func.cu reference_calc.cpp utils.h
+student_func.o: student_func.cu utils.h
 	nvcc -c student_func.cu $(NVCC_OPTS)
 
 compare.o: compare.cpp compare.h
