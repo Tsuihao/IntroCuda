@@ -52,15 +52,15 @@ void rgba_to_greyscale(const uchar4* const rgbaImage,
   //calculate a 1D offset
   
   // find out the offset/index
-  int y = threadIdx.y+ blockIdx.y* blockDim.y;
-  int x = threadIdx.x+ blockIdx.x* blockDim.x;
-  if (y < numRows && x < numCols) {
-  	int index = numCols*y +x;
-  uchar4 color = rgbaImage[index];
-  unsigned char grey = (unsigned char)(0.299f*color.x+ 0.587f*color.y + 0.114f*color.z);
-  greyImage[index] = grey;
+  int col = (blockIdx.x * blockDim.x) + threadIdx.x ;
+  int row = (blockIdx.y * blockDim.y) + threadIdx.y ;
+
+  if(col < numCols && row < numRows)
+  {
+    int index = row * numCols + col;
+    uchar4 color = rgbaImage[index];
+    greyImage[index] = (unsigned char)(0.299f*color.x+ 0.587f*color.y + 0.114f*color.z);
   }
-  
 }
 
 void your_rgba_to_greyscale(const uchar4 * const h_rgbaImage, uchar4 * const d_rgbaImage,
