@@ -22,6 +22,7 @@ void global_reduce_kernel(int* g_in, int* g_out)
         }
         __syncthreads();   
     }
+
     // assgin only the first element, since it is the result of summation
     if(local_t_idx == 0)
     {
@@ -35,7 +36,7 @@ void global_reduce_kernel(int* g_in, int* g_out)
  __global__
  void share_reduce_kernel(int* g_in, int* g_out)
  {
-    extern __shared__ int block_memory[];
+    extern __shared__ int block_memory[]; // local memory share among the same block
     int global_t_idx = threadIdx.x + blockIdx.x * blockDim.x;
     int local_t_idx = threadIdx.x;
 
@@ -43,7 +44,7 @@ void global_reduce_kernel(int* g_in, int* g_out)
     block_memory[local_t_idx] = g_in[global_t_idx];
     __syncthreads();
 
-    // do reduction in global mem
+    // do reduction in shared mem
     for(unsigned int s = blockDim.x/2; s > 0; s >>= 1)
     {
         if(local_t_idx < s)  // take the first half
@@ -52,6 +53,7 @@ void global_reduce_kernel(int* g_in, int* g_out)
         }
         __syncthreads();   
     }
+
     // assgin only the first element, since it is the result of summation
     if(local_t_idx == 0)
     {
@@ -106,7 +108,7 @@ int main()
     dim3 gridSize(1024, 1, 1);
     dim3 blockSize(1024, 1, 1);
     cudaEventRecord(start);
-    share_reduce_kernel<<<gridSize, blockSize, 1024*sizeof(int)>>>(d_array_in, d_array_out); 
+    share_reduce_kernel<<<gridSize, blockSize, 1024*sizeof(int) /*allocated share memory size*/>>>(d_array_in, d_array_out); 
     //global_reduce_kernel<<<gridSize, blockSize>>>(d_array_in, d_array_out)
     cudaEventRecord(stop);
 
@@ -116,7 +118,7 @@ int main()
     float milliseconds = 0;
     cudaEventElapsedTime(&milliseconds, start, stop);
     std::cout << "Elapsed time = " << milliseconds << std::endl;
-    //trace(h_array_out, 1024);
+    trace(h_array_out, 1024);
 
     return 0;
 }
