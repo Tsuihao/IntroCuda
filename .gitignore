@@ -22,3 +22,9 @@
 build
 bin
 
+# images
+*.png
+
+# vscode
+.vscode
+

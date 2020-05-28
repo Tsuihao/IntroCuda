@@ -16,7 +16,6 @@ __global__ void cubic(float* d_out, float* d_in)
     d_out[idx] = f * f * f;
 }
 
-
 int main()
 {
     const int ARRAY_SIZE = 64;
