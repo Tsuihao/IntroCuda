@@ -151,7 +151,7 @@ void preProcess(float** d_luminance, unsigned int** d_cdf,
   float *green = new float[numPixels];
   float *blue  = new float[numPixels];
 
-  //Remeber image is loaded BGR
+  //Remeber image is loaded BGR (array of structure AoS)
   for (size_t i = 0; i < numPixels; ++i) {
     blue[i]  = imgPtr[3 * i + 0];
     green[i] = imgPtr[3 * i + 1];
@@ -177,9 +177,11 @@ void preProcess(float** d_luminance, unsigned int** d_cdf,
   checkCudaErrors(cudaMemcpy(d_blue,  blue,  channelSize, cudaMemcpyHostToDevice));
 
   //convert from RGB space to chrominance/luminance space xyY
-  const dim3 blockSize(32, 16, 1);
-  const dim3 gridSize( (numCols__ + blockSize.x - 1) / blockSize.x, 
-                       (numRows__ + blockSize.y - 1) / blockSize.y, 1);
+  const dim3 blockSize(32, 32, 1); // My SM has 1024 capability
+  const dim3 gridSize(std::ceil(numCols__/blockSize.x), 
+                      std::ceil(numRows__/blockSize.y), 
+                      1);
+  
   rgb_to_xyY<<<gridSize, blockSize>>>(d_red, d_green, d_blue,
                                       d_x__, d_y__,   d_logY__,
                                       .0001f, numRows__, numCols__);
